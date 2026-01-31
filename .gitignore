@@ -9,4 +9,6 @@ venv/
 
 *.ui.autosave
 .idea/
+.idea
 .vscode/
+.gitignore
