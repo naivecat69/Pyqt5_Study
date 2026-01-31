@@ -5,6 +5,8 @@
 # Created by: PyQt5 UI code generator
 #
 # WARNING: Any manual changes made to this file will be lost when pyuic is run again.
+#
+# 사용 예제(한국어): Calc2Widget에서 Ui_Form을 상속하고 setupUi(self)를 호출합니다.
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -78,4 +80,3 @@ class Ui_Form(object):
         self.btn_mul.setText(_translate("Form", "*"))
         self.btn_div.setText(_translate("Form", "/"))
         self.btn_clear.setText(_translate("Form", "Clear"))
-

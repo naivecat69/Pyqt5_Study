@@ -22,6 +22,7 @@ python main.py
 - `docs/calc2_pyuic.md`
 - `docs/graph_fft.md`
 - `docs/base64_tool.md`
+- `docs/pyqt5_basics.md`
 
 ## 구조
 ```

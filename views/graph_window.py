@@ -1,4 +1,6 @@
 # views/graph_window.py
+# 바이너리 파일 그래프 + FFT 뷰어
+# 사용 예제: "Open binary" -> 파일 선택 -> 구간 적용 -> 그래프 확인
 from PyQt5 import QtCore, QtWidgets
 
 
@@ -10,6 +12,7 @@ class GraphViewerWidget(QtWidgets.QWidget):
         self._build_ui()
 
     def _build_ui(self):
+        # UI 구성 (컨트롤 + 그래프 영역)
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(12, 12, 12, 12)
         layout.setSpacing(8)
@@ -21,6 +24,7 @@ class GraphViewerWidget(QtWidgets.QWidget):
         controls = QtWidgets.QHBoxLayout()
         layout.addLayout(controls)
 
+        # 파일 열기 버튼
         self.btn_open = QtWidgets.QPushButton("Open binary")
         self.btn_open.clicked.connect(self.open_file)
         controls.addWidget(self.btn_open)
@@ -42,6 +46,7 @@ class GraphViewerWidget(QtWidgets.QWidget):
         self.spin_end.setMaximum(10**9)
         range_layout.addWidget(self.spin_end)
 
+        # 구간 적용
         self.btn_apply = QtWidgets.QPushButton("Apply Range")
         self.btn_apply.clicked.connect(self.apply_range)
         range_layout.addWidget(self.btn_apply)
@@ -53,6 +58,7 @@ class GraphViewerWidget(QtWidgets.QWidget):
         fft_layout = QtWidgets.QHBoxLayout()
         layout.addLayout(fft_layout)
 
+        # FFT 표시 여부
         self.chk_fft = QtWidgets.QCheckBox("Show FFT")
         self.chk_fft.setChecked(True)
         fft_layout.addWidget(self.chk_fft)
@@ -64,6 +70,7 @@ class GraphViewerWidget(QtWidgets.QWidget):
         self.spin_rate.setValue(1.0)
         fft_layout.addWidget(self.spin_rate)
 
+        # FFT 재계산
         self.btn_fft = QtWidgets.QPushButton("Compute FFT")
         self.btn_fft.clicked.connect(self.apply_range)
         fft_layout.addWidget(self.btn_fft)
@@ -77,6 +84,7 @@ class GraphViewerWidget(QtWidgets.QWidget):
         self._init_plot()
 
     def _init_plot(self):
+        # matplotlib 캔버스 초기화
         try:
             from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
             from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
@@ -95,6 +103,7 @@ class GraphViewerWidget(QtWidgets.QWidget):
         self._plot_layout.addWidget(self._canvas, 1)
 
     def open_file(self):
+        # 파일 열기 다이얼로그
         path, _ = QtWidgets.QFileDialog.getOpenFileName(
             self,
             "Open binary file",
@@ -109,6 +118,7 @@ class GraphViewerWidget(QtWidgets.QWidget):
         self.auto_range()
 
     def _load_data(self, path: str):
+        # 바이너리 -> uint8 배열로 로드
         import numpy as np
         try:
             with open(path, "rb") as f:
@@ -119,6 +129,7 @@ class GraphViewerWidget(QtWidgets.QWidget):
         self._data = np.frombuffer(data, dtype=np.uint8).astype(float)
 
     def auto_range(self):
+        # 전체 범위를 자동으로 설정
         if self._data is None:
             return
         self.spin_start.setValue(0)
@@ -126,6 +137,7 @@ class GraphViewerWidget(QtWidgets.QWidget):
         self.apply_range()
 
     def apply_range(self):
+        # 시작/끝 범위로 그래프 갱신
         if self._data is None or self._canvas is None:
             return
         start = self.spin_start.value()
@@ -140,6 +152,7 @@ class GraphViewerWidget(QtWidgets.QWidget):
         self._draw_segment(segment)
 
     def _draw_segment(self, segment):
+        # 시간영역 + FFT 그래프를 그림
         import numpy as np
 
         self._figure.clear()
@@ -151,6 +164,7 @@ class GraphViewerWidget(QtWidgets.QWidget):
             ax1 = self._figure.add_subplot(1, 1, 1)
             ax2 = None
 
+        # 너무 큰 데이터는 다운샘플링
         max_points = 200000
         if segment.size > max_points:
             step = max(1, int(segment.size / max_points))

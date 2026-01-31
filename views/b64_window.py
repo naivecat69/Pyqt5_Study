@@ -1,4 +1,6 @@
 # views/b64_window.py
+# Base64 인코딩/디코딩 팝업 도구
+# 사용 예제: 입력 텍스트 작성 -> Encode/Decode 버튼 클릭
 import base64
 from PyQt5 import QtCore, QtWidgets
 
@@ -11,6 +13,7 @@ class Base64Dialog(QtWidgets.QDialog):
         self._build_ui()
 
     def _build_ui(self):
+        # UI 구성 (입력/출력 + 버튼)
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(12, 12, 12, 12)
         layout.setSpacing(8)
@@ -44,12 +47,14 @@ class Base64Dialog(QtWidgets.QDialog):
         self.btn_clear.clicked.connect(self.clear_text)
 
     def encode_text(self):
+        # UTF-8 텍스트 -> Base64 인코딩
         raw = self.input_text.toPlainText()
         data = raw.encode("utf-8")
         encoded = base64.b64encode(data).decode("utf-8")
         self.output_text.setPlainText(encoded)
 
     def decode_text(self):
+        # Base64 텍스트 -> UTF-8 디코딩
         raw = self.input_text.toPlainText().strip()
         try:
             decoded = base64.b64decode(raw.encode("utf-8"), validate=True).decode("utf-8")
@@ -59,5 +64,6 @@ class Base64Dialog(QtWidgets.QDialog):
         self.output_text.setPlainText(decoded)
 
     def clear_text(self):
+        # 입력/출력 초기화
         self.input_text.clear()
         self.output_text.clear()
